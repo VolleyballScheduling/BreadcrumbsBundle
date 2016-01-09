@@ -1,0 +1,16 @@
+parameters:
+    volleyball_breadcrumbs.class: Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs
+    volleyball_breadcrumbs.helper.class: Volleyball\Bundle\BreadcrumbsBundle\Templating\Helper\BreadcrumbsHelper
+    volleyball_breadcrumbs.twig.class: Volleyball\Bundle\BreadcrumbsBundle\Twig\Extension\BreadcrumbsExtension
+
+services:
+    volleyball_breadcrumbs:
+        class: %volleyball_breadcrumbs.class%
+    volleyball_breakcrumbs.helper:
+        class: %volleyball_breadcrumbs.helper.class%
+        arguments: [ "@templating", "@volleyball_breadcrumbs", "%volleyball_breadcrumbs.options%"]
+        tags: [{name: templating.helper, alias: breadcrumbs}]
+    volleyball_breadcrumbs.twig:
+        class: %volleyball_breadcrumbs.twig.class:%
+        arguments: ["@service_container"]
+        tags: [{name: twig.extension }]

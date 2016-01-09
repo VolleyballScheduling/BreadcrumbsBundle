@@ -1,52 +1,60 @@
 <?php
+namespace Volleyball\Bundle\BreadcrumbsBundle\Twig\Extension;
 
-namespace WhiteOctober\BreadcrumbsBundle\Twig\Extension;
+use \Symfony\Component\DependencyInjection\ContainerInterface;
+use \Symfony\Component\Templating\Helper\Helper;
+use \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Templating\Helper\Helper;
-use WhiteOctober\BreadcrumbsBundle\Model\SingleBreadcrumb;
-
-/**
- * Provides an extension for Twig to output breadcrumbs
- */
 class BreadcrumbsExtension extends \Twig_Extension
 {
+    /**
+     * Container
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface;
+     */
     protected $container;
+
+    /**
+     * Breadcrumbs
+     * @var array
+     */
     protected $breadcrumbs;
 
+    /**
+     * Construct
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->breadcrumbs = $container->get("white_october_breadcrumbs");
+        $this->breadcrumbs = $container->get("volleyball_breadcrumbs");
     }
 
     /**
-     * Returns a list of functions to add to the existing list.
-     *
-     * @return array An array of functions
+     * Get functions
+     * @return array
      */
     public function getFunctions()
     {
         return array(
-            "wo_breadcrumbs"  => new \Twig_Function_Method($this, "getBreadcrumbs", array("is_safe" => array("html"))),
-            "wo_render_breadcrumbs" => new \Twig_Function_Method($this, "renderBreadcrumbs", array("is_safe" => array("html"))),
+            "breadcrumbs"  => new \Twig_Function_Method($this, "getBreadcrumbs", array("is_safe" => array("html"))),
+            "render_breadcrumbs" => new \Twig_Function_Method($this, "renderBreadcrumbs", array("is_safe" => array("html"))),
         );
     }
 
     /**
+     * Get filters
      * {@inheritdoc}
      */
     public function getFilters()
     {
         return array(
-            "wo_is_final_breadcrumb" => new \Twig_Filter_Method($this, "isLastBreadcrumb"),
+            "volleyball_is_final_breadcrumb" => new \Twig_Filter_Method($this, "isLastBreadcrumb"),
         );
     }
 
     /**
-     * Returns the breadcrumbs object
-     *
-     * @return \WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs
+     * Get breadcrumbs
+     * @return \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs
      */
     public function getBreadcrumbs()
     {
@@ -54,31 +62,28 @@ class BreadcrumbsExtension extends \Twig_Extension
     }
 
     /**
-     * Renders the breadcrumbs in a list
-     *
+     * Render breadcrumbs
      * @param  array  $options
-     * @return string
+     * @return array
      */
     public function renderBreadcrumbs(array $options = array())
     {
-        return $this->container->get("white_october_breadcrumbs.helper")->breadcrumbs($options);
+        return $this->container->get("volleyball_breadcrumbs.helper")->breadcrumbs($options);
     }
 
     /**
-     * Checks if this breadcrumb is the last one in the collection
-     *
-     * @param  SingleBreadcrumb $crumb
+     * Is least breadcrumb
+     * @param  Breadcrumb $crumb
      * @return boolean
      */
-    public function isLastBreadcrumb(SingleBreadcrumb $crumb)
+    public function isLastBreadcrumb(Breadcrumb $crumb)
     {
         return ($this->breadcrumbs[count($this->breadcrumbs)-1] === $crumb);
     }
 
     /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
+     * Get name
+     * @return string
      */
     public function getName()
     {

@@ -1,4 +1,4 @@
-{% if wo_breadcrumbs()|length %}
+{% if breadcrumbs()|length %}
   {% spaceless %}
     <ul id="{{ listId }}" class="{{ listClass }}" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
       {% for b in breadcrumbs %}

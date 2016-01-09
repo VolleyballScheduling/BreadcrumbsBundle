@@ -1,20 +1,34 @@
 <?php
+namespace Volleyball\Bundle\\BreadcrumbsBundle\Templating\Helper;
 
-namespace WhiteOctober\BreadcrumbsBundle\Templating\Helper;
-
-use Symfony\Component\Templating\Helper\Helper;
-use Symfony\Component\Templating\EngineInterface;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
+use \Symfony\Component\Templating\Helper\Helper;
+use \Symfony\Component\Templating\EngineInterface;
+use \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs;
 
 class BreadcrumbsHelper extends Helper
 {
+    /**
+     * Templating service
+     * @param \Symfony\Component\Templating\EngineInterface $templating
+     */
     protected $templating;
+
+    /**
+     * Breadcrumbs
+     * @var array
+     */
     protected $breadcrumbs;
+
+    /**
+     * Options
+     * @var array
+     */
     protected $options = array();
 
     /**
+     * Construct
      * @param \Symfony\Component\Templating\EngineInterface $templating
-     * @param \WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs $breadcrumbs
+     * @param \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs $breadcrumbs
      * @param array $options
      */
     public function __construct(EngineInterface $templating, Breadcrumbs $breadcrumbs, array $options)
@@ -25,10 +39,9 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
-     * Returns the HTML for the breadcrumbs
-     *
-     * @param $options
-     * @return string A HTML string
+     * Breadcrumbs
+     * @param  array  $options
+     * @return mixed
      */
     public function breadcrumbs(array $options = array())
     {
@@ -41,7 +54,9 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
+     * Get name
      * @codeCoverageIgnore
+     * @return string
      */
     public function getName()
     {
@@ -49,10 +64,8 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
-     * Merges user-supplied options from the view
-     * with base config values
-     *
-     * @param array $options
+     * Resolve options
+     * @param  array  $options
      * @return array
      */
     private function resolveOptions(array $options = array())

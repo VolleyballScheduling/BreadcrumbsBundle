@@ -1,35 +1,59 @@
 <?php
-
-namespace WhiteOctober\BreadcrumbsBundle\Model;
+namespace Volleyball\Bundle\BreadcrumbsBundle\Model;
 
 class Breadcrumbs implements \Iterator, \ArrayAccess, \Countable
 {
-    private $breadcrumbs = array();
+    /**
+     * Breadcrumbs
+     * @var array
+     */
+    protected $breadcrumbs = array();
 
-    private $position = 0;
+    /**
+     * Position
+     * @var integer
+     */
+    protected $position = 0;
 
-    public function addItem($text, $url = "", array $translationParameters = array())
+    /**
+     * Add a crumb
+     * @param string $text
+     * @param string $url
+     * @param array  $translationParams
+     */
+    public function addItem($text, $url = "", array $translationParams = array())
     {
-        $b = new SingleBreadcrumb($text, $url, $translationParameters);
-        $this->breadcrumbs[] = $b;
+        $crumb = new Breadcrumb($text, $url, $translationParams);
+        $this->breadcrumbs[] = $crumb;
 
         return $this;
     }
 
-    public function addObjectArray(array $objects, $text, $url = "", array $translationParameters = array()) {
+    /**
+     * Add an array of object
+     * @param array  $objects
+     * @param string $text
+     * @param string $url
+     * @param array  $translationParams [description]
+     */
+    public function addObjectArray(array $objects, $text, $url = "", array $translationParams = array()) {
         foreach($objects as $object) {
-            $itemText = $this->validateArgument($object, $text);
+            $crumbText = $this->validateArgument($object, $text);
             if ($url != "") {
-                $itemUrl = $this->validateArgument($object, $url);
+                $crumbUrl = $this->validateArgument($object, $url);
             } else {
-                $itemUrl = "";
+                $crumbUrl = "";
             }
-            $this->addItem($itemText, $itemUrl, $translationParameters);
+            $this->addCrumb($crumbText, $crumbUrl, $translationParams);
         }
 
         return $this;
     }
 
+    /**
+     * Clear breadcrumbs
+     * @return \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs
+     */
     public function clear()
     {
         $this->breadcrumbs = array();
@@ -37,75 +61,134 @@ class Breadcrumbs implements \Iterator, \ArrayAccess, \Countable
         return $this;
     }
 
-    public function addObjectTree($object, $text, $url = "", $parent = 'parent', array $translationParameters = array(), $firstPosition = -1) {
-        $itemText = $this->validateArgument($object, $text);
+    /**
+     * Add a tree of objects
+     * @param [type]  $object
+     * @param [type]  $text
+     * @param string  $url
+     * @param string  $parent
+     * @param array   $translationParams
+     * @param integer $firstPosition
+     */
+    public function addObjectTree($object, $text, $url = "", $parent = 'parent', array $translationParams = array(), $firstPosition = -1) {
+        $crumbText = $this->validateArgument($object, $text);
         if ($url != "") {
-            $itemUrl = $this->validateArgument($object, $url);
+            $crumbUrl = $this->validateArgument($object, $url);
         } else {
-            $itemUrl = "";
+            $crumbUrl = "";
         }
-        $itemParent = $this->validateArgument($object, $parent);
+        $crumbParent = $this->validateArgument($object, $parent);
         if ($firstPosition == -1) {
             $firstPosition = sizeof($this->breadcrumbs);
         }
-        $b = new SingleBreadcrumb($itemText, $itemUrl, $translationParameters);
-        array_splice($this->breadcrumbs, $firstPosition, 0, array($b));
+        $crumb = new Breadcrumb($crumbText, $crumbUrl, $translationParams);
+        array_splice($this->breadcrumbs, $firstPosition, 0, array($crumb));
         if ($itemParent) {
-            $this->addObjectTree($itemParent, $text, $url, $parent, $translationParameters, $firstPosition);
+            $this->addObjectTree($crumbParent, $text, $url, $parent, $translationParams, $firstPosition);
         }
         return $this;
     }
 
+    /**
+     * Rewind
+     * @return array
+     */
     public function rewind()
     {
         return reset($this->breadcrumbs);
     }
 
+    /**
+     * Current
+     * @return \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumb
+     */
     public function current()
     {
         return current($this->breadcrumbs);
     }
 
+    /**
+     * Key
+     * @return string
+     */
     public function key()
     {
         return key($this->breadcrumbs);
     }
 
+    /**
+     * Next
+     * @return \Volleyball\Bundle\BreadcrumbsBundle\Model\Breadcrumbs
+     */
     public function next()
     {
         return next($this->breadcrumbs);
     }
 
+    /**
+     * Valiud
+     * @return boolean
+     */
     public function valid()
     {
         return key($this->breadcrumbs) !== null;
     }
 
+    /**
+     * Offset exists
+     * @param  mixed $offset
+     * @return boolean
+     */
     public function offsetExists($offset)
     {
         return isset($this->breadcrumbs[$offset]);
     }
 
+    /**
+     * Set offset
+     * @param  mixed $offset
+     * @param  mixed$value
+     */
     public function offsetSet($offset, $value)
     {
         $this->breadcrumbs[$offset] = $value;
     }
 
+    /**
+     * Get offset
+     * @param  mixed $offset
+     * @return null|\Volleyball\Bundle\BreacrumbsBundle\Model\Breadcrumb
+     */
     public function offsetGet($offset)
     {
         return isset($this->breadcrumbs[$offset]) ? $this->breadcrumbs[$offset] : null;
     }
 
+    /**
+     * Unset offset
+     * @param  mixed $offset
+     */
     public function offsetUnset($offset)
     {
         unset($this->breadcrumbs[$offset]);
     }
 
+    /**
+     * Count
+     * @return integer
+     */
     public function count()
     {
         return count($this->breadcrumbs);
     }
 
+    /**
+     * Validate argument
+     * @param  mixed $object
+     * @param  mixed $argument
+     * @return mixed
+     * @throws \InvalidArgumentException
+     */
     private function validateArgument($object, $argument) {
         if (is_callable($argument)) {
             return $argument($object);
@@ -113,7 +196,7 @@ class Breadcrumbs implements \Iterator, \ArrayAccess, \Countable
             if (method_exists($object,'get' . $argument)) {
                 return call_user_func(array(&$object,  'get' . $argument), 'get' . $argument);
             } else {
-                throw new \InvalidArgumentException("Neither a method with the name get$argument() exists nor is it a valid callback function.");
+                throw new \InvalidArgumentException("A method with the name get$argument() does not exist.");
             }
         }
     }

@@ -1,33 +1,30 @@
 <?php
+namespace Volleyball\Bundle\BreadcrumbsBundle\DependencyInjection;
 
-namespace WhiteOctober\BreadcrumbsBundle\DependencyInjection;
+use \Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-class Configuration implements ConfigurationInterface
+class Configuration implements \Symfony\Component\Config\Definition\ConfigurationInterface
 {
     /**
-     * Generates the configuration tree builder.
-     *
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
+     * Get config TreeBuilder
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
      */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root("white_october_breadcrumbs");
+        $rootNode = $treeBuilder->root("volleyball_breadcrumbs");
 
         $rootNode->
             children()->
                 scalarNode("separator")->defaultValue("/")->end()->
                 scalarNode("separatorClass")->defaultValue("separator")->end()->
-                scalarNode("listId")->defaultValue("wo-breadcrumbs")->end()->
+                scalarNode("listId")->defaultValue("breadcrumbs")->end()->
                 scalarNode("listClass")->defaultValue("breadcrumb")->end()->
                 scalarNode("itemClass")->defaultValue("")->end()->
                 scalarNode("linkRel")->defaultValue("")->end()->
                 scalarNode("locale")->defaultNull()->end()->
                 scalarNode("translation_domain")->defaultNull()->end()->
-                scalarNode("viewTemplate")->defaultValue("WhiteOctoberBreadcrumbsBundle::breadcrumbs.html.twig")->end()->
+                scalarNode("viewTemplate")->defaultValue("VolleyballBreadcrumbsBundle::breadcrumbs.html.twig")->end()->
             end()
         ;
 
